@@ -26,7 +26,7 @@ jobs:
         id: npm-run-package
         run: npm run package --if-present
 
-      - name: Publish
+      - name: Publishhhh
         id: npm-publish
         run: npm publish
         env:
