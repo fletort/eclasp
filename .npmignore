@@ -1,0 +1,3 @@
+# see npmjs.com/npmignore for more details.
+**/**
+!dist/*

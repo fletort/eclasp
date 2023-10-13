@@ -1,0 +1,33 @@
+name: Publish Package to npmjs
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .nprmc file to publish to npm
+        id: setup-node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Dependencies
+        id: npm-ci
+        run: npm ci
+
+      - name: Package
+        id: npm-run-package
+        run: npm run package --if-present
+
+      - name: Publish
+        id: npm-publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
