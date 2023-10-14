@@ -29,10 +29,10 @@ jobs:
       uses: anothrNick/github-tag-action@1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        tag_name: ${{ env.PACKAGE_VERSION }}
+        CUSTOM_TAG: ${{ env.PACKAGE_VERSION }}
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag: ${{ steps.create-tag.outputs.new_tag }}
+        tag_name: ${{ steps.create-tag.outputs.new_tag }}
         token: ${{ secrets.PAT_RELEASE }}
