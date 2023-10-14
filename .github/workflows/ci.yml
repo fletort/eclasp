@@ -9,7 +9,7 @@ on:
 
 jobs:
   test-javascript:
-    name: JavaScript Tests And Package
+    name: Javascript Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +39,3 @@ jobs:
       - name: Test
         id: npm-ci-test
         run: npm run ci-test
-
-      - name: Package
-        id: npm-run-package
-        run: npm run package --if-present

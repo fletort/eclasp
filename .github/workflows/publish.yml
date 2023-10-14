@@ -5,6 +5,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: Publish
     steps:
       - name: Checkout
         id: checkout
@@ -26,7 +27,7 @@ jobs:
         id: npm-run-package
         run: npm run package --if-present
 
-      - name: Publishhhh
+      - name: Publish
         id: npm-publish
         run: npm publish
         env:
