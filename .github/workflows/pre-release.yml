@@ -20,13 +20,28 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Get Version from Package File
+          
+      - name: Check Version from Package File
         id: get-version 
-        run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+        run: |
+          node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+          if git show-ref --tags --verify --quiet "refs/tags/${{ env.PACKAGE_VERSION }}"; then
+            echo "Tag ${{ env.PACKAGE_VERSION }} exists"
+            echo "MY_MSG=Error: Package Version ${{ env.PACKAGE_VERSION }} is not correct. Tag already exists." >> $GITHUB_ENV 
+          else
+            echo "Tag ${{ env.PACKAGE_VERSION }} does not exist"
+          fi
 
-      - name: Get Version of Release Branch
-        run: echo -n "BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')" >> $GITHUB_ENV
+      - name: Check Version of Release Branch
+        if:  startsWith(github.head_ref, 'releases/')
+        run: |
+          echo -n "BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')" >> $GITHUB_ENV
+          if git show-ref --tags --verify --quiet "refs/tags/${{ env.BRANCH_VERSION }}"; then
+            echo "Tag ${{ env.BRANCH_VERSION }} exists"
+            echo "MY_MSG=${{ env.MY_MSG }} Error: Package Version ${{ env.PACKAGE_VERSION }} is not correct. Tag already exists." >> $GITHUB_ENV 
+          else
+            echo "Tag ${{ env.BRANCH_VERSION }} does not exist"
+          fi
       
       - name: Fail PR if versions not matching
         if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
@@ -47,5 +62,5 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '👋 Thanks for reporting!'
+                body: '${{ env.MY_MSG }}'
               })
