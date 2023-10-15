@@ -32,8 +32,8 @@ jobs:
 
       - name: Check for Tag
         run: |
-          if git show-ref --tags --verify --quiet "refs/tags/${{ env.PACKAGE_VERSION }}"; then
-            echo "Tag ${{ env.PACKAGE_VERSION }} exists"
+          if git show-ref --tags --verify --quiet "refs/tags/${{ env.BRANCH_VERSION }}"; then
+            echo "Tag ${{ env.BRANCH_VERSION }} exists"
           else
-            echo "Tag ${{ env.PACKAGE_VERSION }} does not exist"
+            echo "Tag ${{ env.BRANCH_VERSION }} does not exist"
           fi
