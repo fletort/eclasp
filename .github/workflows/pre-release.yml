@@ -24,12 +24,12 @@ jobs:
       - name: Check Version from Package File
         id: get-version 
         run: |
-          node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+          PACKAGE_VERSION=node -p -e '`${require("./package.json").version}`'
           if git show-ref --tags --verify --quiet "refs/tags/${{ env.PACKAGE_VERSION }}"; then
-            echo "Tag ${{ env.PACKAGE_VERSION }} exists"
-            echo "MY_MSG=Error: Package Version ${{ env.PACKAGE_VERSION }} is not correct. Tag already exists." >> $GITHUB_ENV 
+            echo "Tag $PACKAGE_VERSION exists"
+            echo "MY_MSG=Error: Package Version $PACKAGE_VERSION is already used. Associated tag already exists." >> $GITHUB_ENV 
           else
-            echo "Tag ${{ env.PACKAGE_VERSION }} does not exist"
+            echo "Tag PACKAGE_VERSION does not exist"
           fi
 
       - name: Check Version of Release Branch
