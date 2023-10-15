@@ -12,6 +12,8 @@ jobs:
   run_if:
     if:  startsWith(github.head_ref, 'releases/')
     runs-on: ubuntu-latest
+    permissions:
+      pull_requests: write
     steps:
       - name: Checkout
         id: checkout
