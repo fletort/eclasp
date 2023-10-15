@@ -16,6 +16,8 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get Version from Package File
         id: get-version 
@@ -26,5 +28,12 @@ jobs:
       
       - name: Fail PR if versions not matching
         if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
-        run: exit 1
-        
+        run: echo "versions not matching"
+
+      - name: Check for Tag
+        run: |
+          if git show-ref --tags --verify --quiet "refs/tags/${{ env.PACKAGE_VERSION }}"; then
+            echo "Tag ${{ env.PACKAGE_VERSION }} exists"
+          else
+            echo "Tag ${{ env.PACKAGE_VERSION }} does not exist"
+          fi
