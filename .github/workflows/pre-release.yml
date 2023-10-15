@@ -44,8 +44,8 @@ jobs:
           fi
           echo $MSG2
           echo "MSG2=$MSG2" >> $GITHUB_ENV
-          if BRANCH_VERSION != ${{ env.PACKAGE_VERSION }}; then
-            echo "PROUT"
+          if $BRANCH_VERSION != ${{ env.PACKAGE_VERSION }}; then
+            echo "❌ package.json version does not match branch version"
           fi
       
       - name: Fail PR if versions not matching
