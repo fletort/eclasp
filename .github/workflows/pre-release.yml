@@ -23,4 +23,8 @@ jobs:
 
       - name: Get Version of Release Branch
         run: echo "BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')"
+      
+      - name: Fail PR if versions not matching
+        if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
+        run: exit 1
         
