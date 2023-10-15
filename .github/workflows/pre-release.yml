@@ -25,12 +25,12 @@ jobs:
         id: get-version 
         run: |
           PACKAGE_VERSION=$(node -p -e '`${require("./package.json").version}`')
+          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           if git show-ref --tags --verify --quiet "refs/tags/$PACKAGE_VERSION"; then
             MSG1="❌ package.json version $PACKAGE_VERSION is already used. Associated tag already exists."
           else
             MSG1="✅ package.json version $PACKAGE_VERSION is not already used."
           fi
-          echo $MSG1
           echo "MSG1=$MSG1" >> $GITHUB_ENV
           
       - name: Check Version of Release Branch
@@ -43,8 +43,10 @@ jobs:
             MSG2="✅ version from branch $BRANCH_VERSION is not already used."
           fi
           echo $MSG2
-          echo $MSG1
           echo "MSG2=$MSG2" >> $GITHUB_ENV
+          if BRANCH_VERSION != ${{ env.PACKAGE_VERSION }}; then
+            echo "PROUT"
+          fi
       
       - name: Fail PR if versions not matching
         if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
