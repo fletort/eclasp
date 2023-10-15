@@ -26,23 +26,25 @@ jobs:
         run: |
           PACKAGE_VERSION=$(node -p -e '`${require("./package.json").version}`')
           if git show-ref --tags --verify --quiet "refs/tags/$PACKAGE_VERSION"; then
-            MSG="❌ package.json version $PACKAGE_VERSION is already used. Associated tag already exists."
+            MSG1="❌ package.json version $PACKAGE_VERSION is already used. Associated tag already exists."
           else
-            MSG="✅ package.json version $PACKAGE_VERSION was not already used."
+            MSG1="✅ package.json version $PACKAGE_VERSION is not already used."
           fi
-          echo $MSG
-          echo "MSG=$MSG" >> $GITHUB_ENV
+          echo $MSG1
+          echo "MSG1=$MSG1" >> $GITHUB_ENV
           
       - name: Check Version of Release Branch
         if:  startsWith(github.head_ref, 'releases/')
         run: |
-          echo -n "BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')" >> $GITHUB_ENV
-          if git show-ref --tags --verify --quiet "refs/tags/${{ env.BRANCH_VERSION }}"; then
-            echo "Tag ${{ env.BRANCH_VERSION }} exists"
-            echo "MY_MSG=${{ env.MY_MSG }} Error: Package Version ${{ env.PACKAGE_VERSION }} is not correct. Tag already exists." >> $GITHUB_ENV 
+          BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')"
+          if git show-ref --tags --verify --quiet "refs/tags/$BRANCH_VERSION"; then
+            MSG2="❌ version from branch $BRANCH_VERSION is already used. Associated tag already exists."
           else
-            echo "Tag ${{ env.BRANCH_VERSION }} does not exist"
+            MSG2="✅ version from branch $BRANCH_VERSION is not already used."
           fi
+          echo $MSG2
+          echo $MSG1
+          echo "MSG2=$MSG2" >> $GITHUB_ENV
       
       - name: Fail PR if versions not matching
         if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
