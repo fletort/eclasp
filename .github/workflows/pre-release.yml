@@ -31,6 +31,7 @@ jobs:
           else
             MSG1="✅ package.json version $PACKAGE_VERSION is not already used."
           fi
+          echo $MSG1
           echo "MSG1=$MSG1" >> $GITHUB_ENV
           
       - name: Check Version of Release Branch
