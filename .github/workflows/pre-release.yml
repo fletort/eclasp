@@ -26,12 +26,16 @@ jobs:
         run: |
           PACKAGE_VERSION=$(node -p -e '`${require("./package.json").version}`')
           if git show-ref --tags --verify --quiet "refs/tags/$PACKAGE_VERSION"; then
+            MSG="✅ "
             echo "Tag $PACKAGE_VERSION exists"
-            echo "MY_MSG=Error: Package Version $PACKAGE_VERSION is already used. Associated tag already exists." >> $GITHUB_ENV 
+            MSG="❌ package.json version $PACKAGE_VERSION is already used.\n"
+            MSG="$MSG Associated tag already exists"
           else
-            echo "Tag PACKAGE_VERSION does not exist"
+            MSG="✅ package.json version $PACKAGE_VERSION was not already used."
           fi
-
+          echo $MSG
+          echo $MSG >> $GITHUB_ENV
+          
       - name: Check Version of Release Branch
         if:  startsWith(github.head_ref, 'releases/')
         run: |
