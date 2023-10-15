@@ -36,7 +36,7 @@ jobs:
       - name: Check Version of Release Branch
         if:  startsWith(github.head_ref, 'releases/')
         run: |
-          BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')"
+          BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')
           if git show-ref --tags --verify --quiet "refs/tags/$BRANCH_VERSION"; then
             MSG2="❌ version from branch $BRANCH_VERSION is already used. Associated tag already exists."
           else
@@ -44,7 +44,7 @@ jobs:
           fi
           echo $MSG2
           echo "MSG2=$MSG2" >> $GITHUB_ENV
-          if $BRANCH_VERSION != ${{ env.PACKAGE_VERSION }}; then
+          if $BRANCH_VERSION != "${{ env.PACKAGE_VERSION }}"; then
             echo "❌ package.json version does not match branch version"
           fi
       
