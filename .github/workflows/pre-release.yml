@@ -26,8 +26,7 @@ jobs:
         run: |
           PACKAGE_VERSION=$(node -p -e '`${require("./package.json").version}`')
           if git show-ref --tags --verify --quiet "refs/tags/$PACKAGE_VERSION"; then
-            MSG="❌ package.json version $PACKAGE_VERSION is already used.
-            Associated tag already exists"
+            MSG="❌ package.json version $PACKAGE_VERSION is already used. Associated tag already exists."
           else
             MSG="✅ package.json version $PACKAGE_VERSION was not already used."
           fi
