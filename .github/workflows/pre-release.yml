@@ -24,8 +24,8 @@ jobs:
       - name: Check Version from Package File
         id: get-version 
         run: |
-          PACKAGE_VERSION=node -p -e '`${require("./package.json").version}`'
-          if git show-ref --tags --verify --quiet "refs/tags/${{ env.PACKAGE_VERSION }}"; then
+          PACKAGE_VERSION=$(node -p -e '`${require("./package.json").version}`')
+          if git show-ref --tags --verify --quiet "refs/tags/$PACKAGE_VERSION"; then
             echo "Tag $PACKAGE_VERSION exists"
             echo "MY_MSG=Error: Package Version $PACKAGE_VERSION is already used. Associated tag already exists." >> $GITHUB_ENV 
           else
