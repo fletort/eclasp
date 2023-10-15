@@ -3,6 +3,7 @@ on:
   pull_request:
     types:
       - opened
+      - synchronize
     branches:
       - main
   workflow_dispatch:
@@ -21,5 +22,5 @@ jobs:
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
 
       - name: Get Version of Release Branch
-        run: echo "BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')"
+        run: echo "BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')" >> $GITHUB_ENV
         
