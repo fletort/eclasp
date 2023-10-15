@@ -43,8 +43,6 @@ jobs:
           else
             MSG2="✅ version from branch $BRANCH_VERSION is not already used."
           fi
-          echo $MSG2
-          echo "MSG2=$MSG2" >> $GITHUB_ENV
           if "$BRANCH_VERSION" != "${{ env.PACKAGE_VERSION }}"; then
             echo "❌ package.json version ${{ env.PACKAGE_VERSION }} does not match branch version $BRANCH_VERSION"
           fi
