@@ -27,12 +27,12 @@ jobs:
           PACKAGE_VERSION=$(node -p -e '`${require("./package.json").version}`')
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           if git show-ref --tags --verify --quiet "refs/tags/$PACKAGE_VERSION"; then
-            MSG1="❌ package.json version $PACKAGE_VERSION is already used. Associated tag already exists."
+            MSG="❌ package.json version $PACKAGE_VERSION is already used. Associated tag already exists."
           else
-            MSG1="✅ package.json version $PACKAGE_VERSION is not already used."
+            MSG="✅ package.json version $PACKAGE_VERSION is not already used."
           fi
-          echo $MSG1
-          echo "MSG1=$MSG1" >> $GITHUB_ENV
+          echo $MSG
+          echo "COMMENT=$MSG" >> $GITHUB_ENV
           
       - name: Check Version of Release Branch
         if:  startsWith(github.head_ref, 'releases/')
@@ -40,30 +40,24 @@ jobs:
           BRANCH_VERSION=$(echo $GITHUB_HEAD_REF | sed 's/releases\///g')
           echo "BRANCH_VERSION=$BRANCH_VERSION" >> $GITHUB_ENV
           if git show-ref --tags --verify --quiet "refs/tags/$BRANCH_VERSION"; then
-            MSG2="❌ version from branch $BRANCH_VERSION is already used. Associated tag already exists."
+            MSG1="❌ version from branch $BRANCH_VERSION is already used. Associated tag already exists."
           else
-            MSG2="✅ version from branch $BRANCH_VERSION is not already used."
+            MSG1="✅ version from branch $BRANCH_VERSION is not already used."
+          fi
+          echo $MSG1
+          if [[ "$BRANCH_VERSION" != "${{ env.PACKAGE_VERSION }}" ]]; then
+            MSG2="❌ package.json version ${{ env.PACKAGE_VERSION }} does not match branch version $BRANCH_VERSION"
+          else
+            MSG2="✅ package.json version ${{ env.PACKAGE_VERSION }} match the branch version $BRANCH_VERSION"
           fi
           echo $MSG2
-          echo "MSG2=$MSG2" >> $GITHUB_ENV
-          if [[ "$BRANCH_VERSION" != "${{ env.PACKAGE_VERSION }}" ]]; then
-            MSG3="❌ package.json version ${{ env.PACKAGE_VERSION }} does not match branch version $BRANCH_VERSION"
-          else
-            MSG3="✅ package.json version ${{ env.PACKAGE_VERSION }} match the branch version $BRANCH_VERSION"
-          fi
-          echo $MSG3
-          echo "MSG3=$MSG3" >> $GITHUB_ENV
           {
-            echo "MSG1<<EOF"
+            echo "COMMENT<<EOF"
+            echo "$COMMENT"
             echo "$MSG1"
             echo "$MSG2"
-            echo "$MSG3"
             echo EOF
           } >> $GITHUB_ENV
-      
-      - name: Fail PR if versions not matching
-        if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
-        run: echo "versions not matching"
         
       - uses: actions/github-script@v6
         with:
@@ -72,5 +66,9 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `${{ env.MSG1 }}\n${{ env.MSG2 }}\n${{ env.MSG3 }}\n`
+                body: `${{ env.COMMENT }}`
               })
+              
+      - name: Fail PR if versions not matching
+        if: ${{ contains(env.COMMENT, '❌') }}
+        run: exit 1
