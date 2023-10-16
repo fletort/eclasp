@@ -81,7 +81,10 @@ jobs:
             }
   
       - name: Fail PR if versions not matching
+        if: ${{ contains(env.COMMENT, '❌') }}
+        run: exit 1
 
+# RELEASE JOB
   release:
     if: github.event.pull_request.merged == true  && (${{ github.event.action == 'closed' }}
     runs-on: ubuntu-latest
@@ -112,5 +115,4 @@ jobs:
       with:
         tag_name: ${{ steps.create-tag.outputs.new_tag }}
         token: ${{ secrets.PAT_RELEASE }}
-        if: ${{ contains(env.COMMENT, '❌') }}
-        run: exit 1
+
