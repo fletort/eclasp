@@ -53,7 +53,7 @@ jobs:
           echo $MSG2
           echo "COMMENT=$COMMENT\n$MSG1\n$MSG2" >> $GITHUB_ENV  
           
-      - name: Find Comment
+      - name: Add PR Comment
         uses: actions/github-script@v6
         with:
           script: |
@@ -65,18 +65,18 @@ jobs:
             })
   
             // Find if comment was already made by the bot.                                                                                                    
-            const botComment = comments.find(comment => comment.body == "${{ env.COMMENT }}")    
-            
-      - uses: actions/github-script@v6
-        with:
-            script: |
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
+            const botComment = comments.find(comment => comment.body == "${{ env.COMMENT }}")
+            if (botComment) {
+              console.log("PR Comment already made")
+            } else {
+              console.log("Add PR Comment")
+              await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
+                issue_number: context.payload.number,
                 body: `${{ env.COMMENT }}`
-              })
-              
+            }
+  
       - name: Fail PR if versions not matching
         if: ${{ contains(env.COMMENT, '❌') }}
         run: exit 1
