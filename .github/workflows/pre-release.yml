@@ -10,7 +10,7 @@ on:
 
 jobs:
   run_if:
-    if:  startsWith(github.head_ref, 'releases/')
+    if:  startsWith(github.head_ref, 'releases/') && (${{ github..event.action == 'opened' }} || ${{ github..event.action == 'synchronize' }})
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
