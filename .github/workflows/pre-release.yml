@@ -72,5 +72,5 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: '${{ env.MSG1 }}\n${{ env.MSG2 }}\n${{ env.MSG3 }}\n'
+                body: `${{ env.MSG1 }}\n${{ env.MSG2 }}\n${{ env.MSG3 }}\n`
               })
