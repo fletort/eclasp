@@ -53,6 +53,13 @@ jobs:
           fi
           echo $MSG3
           echo "MSG3=$MSG3" >> $GITHUB_ENV
+          {
+            echo "MSG1<<EOF"
+            echo "$MSG1"
+            echo "$MSG2"
+            echo "$MSG3"
+            echo EOF
+          } >> $GITHUB_ENV
       
       - name: Fail PR if versions not matching
         if: ${{ env.PACKAGE_VERSION != env.BRANCH_VERSION }}
