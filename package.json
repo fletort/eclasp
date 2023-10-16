@@ -1,6 +1,6 @@
 {
   "name": "eclasp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Extended Command Line Apps Script Projects",
   "type": "module",
   "exports": {
