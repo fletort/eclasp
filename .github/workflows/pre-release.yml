@@ -4,13 +4,15 @@ on:
     types:
       - opened
       - synchronize
+      - closed
     branches:
       - main
   workflow_dispatch:
 
 jobs:
-  run_if:
+  check_future_version:
     if:  startsWith(github.head_ref, 'releases/') && (${{ github.event.action == 'opened' }} || ${{ github.event.action == 'synchronize' }})
+    name: Check Future Release Version
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -79,5 +81,36 @@ jobs:
             }
   
       - name: Fail PR if versions not matching
+
+  build:
+    if: github.event.pull_request.merged == true  && (${{ github.event.action == 'closed' }}
+    runs-on: ubuntu-latest
+    name: Release
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      id: checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.merge_commit_sha }}
+        fetch-depth: '0'
+
+    - name: Get Version from Package File
+      id: get-version 
+      run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+
+    - name: Create Tag
+      id: create-tag
+      uses: anothrNick/github-tag-action@1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CUSTOM_TAG: ${{ env.PACKAGE_VERSION }}
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.create-tag.outputs.new_tag }}
+        token: ${{ secrets.PAT_RELEASE }}
         if: ${{ contains(env.COMMENT, '❌') }}
         run: exit 1
