@@ -7,7 +7,7 @@
     ".": "./dist/index.js"
   },
   "scripts": {
-    "ci-test": "jest",
+    "ci-test": "jest && npx coverage-badges --output coverage/badges.svg",
     "format:write": "prettier --write **/*.js",
     "format:check": "prettier --check **/*.js",
     "lint": "npx eslint . -c ./.github/linters/.eslintrc.yml",
@@ -46,6 +46,12 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "./src/**"
+    ],
+    "reporters": [
+      "default",
+      ["./node_modules/jest-html-reporter", {
+        "pageTitle": "Test Report"
+      }]
     ]
   },
   "dependencies": {
@@ -62,6 +68,7 @@
     "eslint-plugin-github": "^4.10.1",
     "eslint-plugin-jest": "^27.4.2",
     "jest": "^29.7.0",
+    "jest-html-reporter": "^3.10.2",
     "memfs": "^4.6.0",
     "prettier": "^3.0.3"
   }

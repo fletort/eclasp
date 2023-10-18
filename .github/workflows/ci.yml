@@ -39,3 +39,19 @@ jobs:
       - name: Test
         id: npm-ci-test
         run: npm run ci-test
+
+      - name: Keep Coverage Result
+        id: upload-artifact-coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: './coverage'
+          retention-days: 1
+      
+      - name: Keep Test Result
+        id: upload-artifact-test
+        uses: actions/upload-artifact@v3
+        with:
+          name: test
+          path: './test-report.html'
+          retention-days: 1
